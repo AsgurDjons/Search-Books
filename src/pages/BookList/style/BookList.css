@@ -1,0 +1,23 @@
+.container {
+    width: 70%;
+    margin: 0 auto;
+}
+.books-counter {
+    text-align: center;
+    font-size: 24px;
+    margin: 15px 0;
+}
+.items-book {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+.btn_loadMore {
+    display: block;
+    width: 150px;
+    height: 45px;
+    background-color: lightslategray;
+    border: none;
+    border-radius: 10px;
+    margin: 20px auto;
+}
