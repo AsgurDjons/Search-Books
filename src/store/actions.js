@@ -1,7 +1,7 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import {makeAutoObservable, runInAction, toJS} from "mobx";
 
 class Books {
-  array = []
+  arrayBooks = []
   count = 0
   toggleDescr = {
     toggle: false,
@@ -18,19 +18,15 @@ class Books {
 
   fetchArray() {
     try {
-      fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:"${this.searchParams.books}"
-    ${
-        this.searchParams.categories !== "all"? "+subject:" + this.searchParams.categories:
-          ""
-      }&maxResults=30&orderBy=${
-        this.searchParams.sorting
-      }
-    `)
+      fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle
+    "${this.searchParams.books}
+    "${this.searchParams.categories !== "all"? "+subject:" + this.searchParams.categories:""}
+    &startIndex=0&maxResults=30&orderBy=${this.searchParams.sorting}`)
         .then(response =>  response.json())
         .then( json =>  {
           runInAction(() => {
             this.count = json.totalItems
-            this.count !== 0? (this.array = [... json.items]):( this.array = [])
+            this.count !== 0? (this.arrayBooks = [... json.items]):( this.arrayBooks = [])
             this.toggleDescr.toggle = false
           })
         })
@@ -38,26 +34,24 @@ class Books {
       console.log(e)
     }
   }
+
   fetchMoreArray() {
     try {
-      fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:"
-    ${this.searchParams.books}
-    "+subject:"
-    ${this.searchParams.categories}
-    &startIndex=
-    ${this.array.length}
-    &maxResults=30
-    &orderBy=
-    ${this.searchParams.sorting}
-    `)
+      console.log(toJS(this.searchParams))
+      console.log(this.arrayBooks.length)
+      fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle
+    "${this.searchParams.books}
+    "${this.searchParams.categories !== "all"? "+subject:" + this.searchParams.categories:""}
+    &startIndex=${this.arrayBooks.length}&maxResults=30&orderBy=${this.searchParams.sorting}`)
         .then(response => response.json())
-        .then( json =>  {
+        .then(json => {
           runInAction(() => {
-            console.log(json)
-            this.array = [...this.array, ... json.items]
+            if (typeof json.items !== 'undefined'){
+              this.arrayBooks = [...this.arrayBooks, ...json.items]
+            }
           })
         })
-    } catch (e) {
+    }catch (e) {
       console.log(e)
     }
   }
@@ -89,3 +83,4 @@ class Books {
   }
 }
 export default new Books() ;
+

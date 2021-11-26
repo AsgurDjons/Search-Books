@@ -3,7 +3,7 @@ import '../style/BlockCard.css'
 import getBooks from "../../../store/actions";
 
 export default function BlockCard({props}) {
-
+  console.log('render')
   return (
     <div className="book-card" onClick={() => getBooks.toggleDescription(props.id)}>
       <img
